@@ -14,13 +14,20 @@
 </template>
 
 <script>
-  export default {
-    computed: {
-      isUserLoggedIn () {
-        return this.$store.getters.isUserLoggedIn;
-      }
+
+import getWeb3 from '../ethereum/getWeb3'
+
+export default {
+  computed: {
+    isUserLoggedIn () {
+      return this.$store.getters.isUserLoggedIn
     }
+  },
+  beforeCreate() {
+	  console.log('registerWeb3 Action dispatched from App.vue');
+	  this.$store.dispatch('registerWeb3')
   }
+}
 </script>
 
 <style lang="scss">

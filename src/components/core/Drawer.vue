@@ -96,30 +96,35 @@ export default {
         text: 'Icons'
       },
       {
-        to: '/courses',
-        icon: 'mdi-alpha',
-        text: 'Courses'
-      },
-      {
-        to: '/students',
-        icon: 'mdi-account-group',
-        text: 'Students'
-      },
-      {
-        to: '/groups',
-        icon: 'mdi-apps',
-        text: 'Groups'
-      },
-      {
-        to: '/teachers',
-        icon: 'mdi-account-multiple',
-        text: 'Teachers'
-      },
-      {
-        to: '/application',
-        icon: 'mdi-android',
-        text: 'Application'
-      },
+        to: '/votings',
+        icon: 'mdi-assistant',
+        text: 'Мои голосования'
+      }
+      // {
+      //   to: '/courses',
+      //   icon: 'mdi-alpha',
+      //   text: 'Courses'
+      // },
+      // {
+      //   to: '/students',
+      //   icon: 'mdi-account-group',
+      //   text: 'Students'
+      // },
+      // {
+      //   to: '/groups',
+      //   icon: 'mdi-apps',
+      //   text: 'Groups'
+      // },
+      // {
+      //   to: '/teachers',
+      //   icon: 'mdi-account-multiple',
+      //   text: 'Teachers'
+      // },
+      // {
+      //   to: '/application',
+      //   icon: 'mdi-android',
+      //   text: 'Application'
+      // },
     ],
     responsive: false
   }),

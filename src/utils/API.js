@@ -1,13 +1,13 @@
 
-const baseUrl = 'http://localhost:8090/';
+const baseUrl = 'http://localhost:8090/'
 
 const method = {
-  signin: 'admin/auth',
-  signup: 'admin/register',
-  logout: 'admin/logout',
-  adminInfo: 'admin/info',
-  loadTeachers: 'admin/all',
-  addTeacher: 'admin/add',
+  signin: 'user/auth',
+  signup: 'user/register',
+  logout: 'user/logout',
+  adminInfo: 'user/info',
+  loadTeachers: 'user/all',
+  addTeacher: 'user/add',
 
   createCourse: 'course/create',
   schoolCourses: 'course/',

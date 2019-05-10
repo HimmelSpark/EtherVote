@@ -32,23 +32,24 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field
-                      v-model="schoolName"
-                      label="School Name"/>
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field
                       type="password"
                       :counter="8"
                       :rules="passwordRules"
                       v-model="password"
-                      label="Password"/>
+                      label="Пароль"/>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field
                       type="password"
                       :counter="8"
                       v-model="confirm"
-                      label="Confirm password"/>
+                      label="Подтвердите пароль"/>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field
+                      type="password"
+                      v-model="passphrase"
+                      label="Кодовая фраза"/>
                 </v-flex>
                 <v-flex xs12 text-xs-right>
                   <v-btn
@@ -77,50 +78,62 @@
       >
         <router-link tag="a" class="col" class-active="active" to="/login">Already have an account?</router-link>
       </v-flex>
+
+      {{web3}}
+
     </v-container>
   </v-container>
 </template>
 
 <script>
   export default {
-    data: () => ({
-      email: "",
-      schoolName: "",
-      password: "",
-      confirm: "",
-      valid: false,
-      emailRules: [
-        v => !!v || "E-mail is required",
-        v => /.+@.+/.test(v) || "E-mail must be valid"
-      ],
-      passwordRules: [
-        v => !!v || "Password is required",
-        v => (v && v.length >= 8) || "Too short password"
-      ],
-      confirmRules: [
-        v => !!v || "Confirmation is required",
-        v => !!v === this.password || "Passwords did not match"
-      ],
-      passwordConfirmRules: [
-        v => !!v || "Password confirmation is required",
-        v => v === this.password || "Passwords didn't match"
-      ]
+	data: () => ({
+	  email: "",
+	  password: "",
+	  confirm: "",
+	  passphrase: "",
+	  valid: false,
+	  emailRules: [
+		v => !!v || "E-mail is required",
+		v => /.+@.+/.test(v) || "E-mail must be valid"
+	  ],
+	  passwordRules: [
+		v => !!v || "Password is required",
+		v => (v && v.length >= 8) || "Too short password"
+	  ],
+	  confirmRules: [
+		v => !!v || "Confirmation is required",
+		v => !!v === this.password || "Passwords did not match"
+	  ],
+	  passwordConfirmRules: [
+		v => !!v || "Password confirmation is required",
+		v => v === this.password || "Passwords didn't match"
+	  ]
 
-    }),
-    methods: {
-      onSubmit() {
-        if (this.$refs.form.validate()) {
-          const user = {
-            email: this.email,
-            password: this.password,
-          };
-          this.$store.dispatch("registerUser", {user, schoolName: this.schoolName})
-              .then(() => {
-                this.$router.push("/");
-              })
-              .catch(err => console.log(err));
-        }
-      }
+	}),
+	methods: {
+	  async onSubmit() {
+		if (this.$refs.form.validate()) {
+		  let user = {
+			email: this.email,
+			password: this.password,
+		  };
+
+		  const data = await this.web3.web3Instance().eth.personal.newAccount(this.passphrase)
+
+      user.publicKey = data
+	    this.$store.dispatch("registerUser", user)
+		    .then(() => {
+			    this.$router.push("/");
+		    })
+		    .catch(err => console.log(err));
     }
+	  }
+	},
+	computed: {
+	  web3() {
+		  return this.$store.getters.getWeb3;
+	  }
+	}
   }
 </script>
