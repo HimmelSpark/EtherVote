@@ -4,6 +4,7 @@
       col
       wrap
       align-center>
+
       <template v-for="(voting, index) in votings">
         <v-flex
           :key="index"
@@ -14,34 +15,27 @@
             <v-card
               slot-scope="{ hover }"
               :class="`elevation-${hover ? 12 : 2}`"
-              class="mx-auto voteCard">
-              <v-card-title>
-                <v-chip :color="voting.color">#{{ index + 1 }}</v-chip>
-                {{ voting.name }}
-              </v-card-title>
-              <v-card-text>
-                <template v-for="(i, index) in voting.options">
-                  <template v-if="index <= 2">
-                    <v-chip :key="i">{{ i }}</v-chip>
-                  </template>
+              class="ma-auto voteCard">
 
-                  <template v-else>
-                    <v-chip
-                      :key="i"
-                      dark
-                      color="tertiary">...</v-chip>
-                  </template>
+              <v-card-title>
+                <v-chip label>#{{index+1}}</v-chip>
+                <span class="headline">{{voting.name}}</span>
+              </v-card-title>
+
+              <v-card-text>
+                <span>{{voting.description}}</span>
+                <br>
+                <template v-for="v in voting.variants">
+                  <v-chip>{{v.name}}</v-chip>
                 </template>
+
               </v-card-text>
+
             </v-card>
 
           </v-hover>
 
         </v-flex>
-
-        <v-flex
-          :key="voting"
-          xs1/>
 
       </template>
 
@@ -54,6 +48,7 @@
       </v-btn>
 
     </v-layout>
+
     <v-dialog v-model="dialog" max-width="580">
 
           <material-card
@@ -136,6 +131,8 @@
           </material-card>
 
         </v-dialog>
+
+
   </v-container>
 </template>
 
@@ -143,11 +140,6 @@
 export default {
   data() {
     return {
-      votings: [
-        { id: 1, name: 'Выборы Пупа Земли', options: ['Яafadadas', 'Тasdasы', 'Онasdas'], color: 'red' },
-        { id: 2, name: 'Выборы ***зидента', options: ['Я', 'Ты', 'Он', 'kjjhgh'], color: 'green' },
-        { id: 3, name: 'Выборы ради выборов', options: ['Я', 'Ты', 'Он'], color: 'orange' }
-      ],
       dialog: false,
 	    valid: false,
       name: '',
@@ -175,6 +167,10 @@ export default {
 	  votingContractHex() {
 	    return this.$store.getters.votingContractHex
     },
+	  votings() {
+      return this.$store.getters.myVotings
+    }
+
   },
   methods: {
 	  async addVoting () {
@@ -198,12 +194,18 @@ export default {
           .on('transactionHash', (hash) => {
             voting.blockKey = hash;
 			      this.$store.dispatch('createVote', voting)
+                .then(() => {
+                  this.$store.dispatch('loadMyVotings');
+                  this.dialog = false;
+                })
+                .catch(() => {
+				          this.dialog = false;
+                })
           })
           .on('confirmation', (confirmationNumber, receipt) => {})
           .on('receipt', (receipt) => {});
     }
   }
-
 }
 
 /*
@@ -216,6 +218,5 @@ export default {
 
 <style>
   .voteCard {
-    margin: 5%;
   }
 </style>
