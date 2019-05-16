@@ -133,7 +133,10 @@
 	computed: {
 	  web3() {
 		  return this.$store.getters.getWeb3;
-	  }
+	  },
+    user() {
+	    return this.$store.getters.user;
+    }
 	}
   }
 </script>

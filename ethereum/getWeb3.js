@@ -10,9 +10,9 @@ import Web3 from 'web3'
 
 let getWeb3 = new Promise(function (resolve, reject) {
   // Check for injected web3 (mist/metamask)
-  // var web3 = new Web3(new Web3.providers.HttpProvider('http://134.209.237.111:8545'))
+  var web3 = new Web3(new Web3.providers.HttpProvider('http://134.209.237.111:8545'))
   // let web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
-  let web3 = new Web3('http://127.0.0.1:8545');
+  // let web3 = new Web3('http://127.0.0.1:8545');
   resolve({
 	injectedWeb3: web3.isConnected,
 	web3() {
