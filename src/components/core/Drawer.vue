@@ -21,13 +21,9 @@
         <v-list-tile avatar>
           <v-list-tile-avatar
             color="white">
-            <v-img
-              :src="logo"
-              height="34"
-              contain/>
           </v-list-tile-avatar>
           <v-list-tile-title class="title">
-            email@ex.ru
+            Id сети: {{networkId}}
           </v-list-tile-title>
         </v-list-tile>
         <v-divider/>
@@ -65,70 +61,28 @@ import {
 export default {
   data: () => ({
     links: [
-      // {
-      //   to: '/dashboard',
-      //   icon: 'mdi-component-dashboard',
-      //   text: 'Dashboard'
-      // },
-      // {
-      //   to: '/user-profile',
-      //   icon: 'mdi-account',
-      //   text: 'User Profile'
-      // },
-      // {
-      //   to: '/table-list',
-      //   icon: 'mdi-clipboard-outline',
-      //   text: 'Table List'
-      // },
-      // {
-      //   to: '/typography',
-      //   icon: 'mdi-format-font',
-      //   text: 'Typography'
-      // },
-      // {
-      //   to: '/notifications',
-      //   icon: 'mdi-bell',
-      //   text: 'Notifications'
-      // },
       {
-        to: '/icons',
-        icon: 'mdi-chart-bubble',
-        text: 'Icons'
+        to: '/user-profile',
+        icon: 'mdi-account',
+        text: 'Профиль'
       },
+      // {
+      //   to: '/icons',
+      //   icon: 'mdi-chart-bubble',
+      //   text: 'Icons'
+      // },
       {
         to: '/votings',
         icon: 'mdi-assistant',
         text: 'Мои голосования'
       }
-      // {
-      //   to: '/courses',
-      //   icon: 'mdi-alpha',
-      //   text: 'Courses'
-      // },
-      // {
-      //   to: '/students',
-      //   icon: 'mdi-account-group',
-      //   text: 'Students'
-      // },
-      // {
-      //   to: '/groups',
-      //   icon: 'mdi-apps',
-      //   text: 'Groups'
-      // },
-      // {
-      //   to: '/teachers',
-      //   icon: 'mdi-account-multiple',
-      //   text: 'Teachers'
-      // },
-      // {
-      //   to: '/application',
-      //   icon: 'mdi-android',
-      //   text: 'Application'
-      // },
     ],
     responsive: false
   }),
   computed: {
+    networkId() {
+      return this.$store.getters.getWeb3.networkId
+    },
 	...mapState('app', ['image', 'color']),
 	inputValue: {
 	  get () {

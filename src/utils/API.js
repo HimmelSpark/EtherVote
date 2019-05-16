@@ -6,8 +6,10 @@ const method = {
   signup: 'user/register',
   logout: 'user/logout',
   adminInfo: 'user/info',
+  restoreUser: 'user/change',
+
   createVoting: 'voting/create',
-  loadMyVotings: 'voting/get/user'
+  loadMyVotings: 'voting/get/user',
 };
 
 export default {baseUrl, method};

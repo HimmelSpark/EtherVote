@@ -64,5 +64,33 @@ export default {
       commit('setRenderPermission', true)
       throw e
     }
+  },
+  async restoreUser ({commit}, user) {
+	console.log('restoring user account');
+	commit('clearError');
+	commit('setLoading', true);
+	try {
+	  console.log(user);
+	  const response = await HTTP.post(API.method.restoreUser, user);
+	  commit('setLoading', false);
+      commit('setUser', response.data);
+      commit('setMyVotings', null);
+	} catch (e) {
+	  commit('setLoading', false);
+	  commit('setError', e.response.data);
+	  throw e
+	}
+  },
+  async loadUser ({commit}) {
+	commit('loading user');
+	commit('setLoading', true);
+	try {
+	  const response = await HTTP.get(API.method.adminInfo);
+	  commit('setUser', response.data)
+	} catch (e) {
+	  commit('setLoading', false);
+	  commit('setError', e.response.data);
+	  throw e
+	}
   }
 }

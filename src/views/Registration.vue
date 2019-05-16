@@ -115,12 +115,10 @@
 	  async onSubmit() {
 		if (this.$refs.form.validate()) {
 		  let user = {
-			email: this.email,
-			password: this.password,
+			  email: this.email,
+			  password: this.password,
 		  };
-
 		  const data = await this.web3.web3Instance().eth.personal.newAccount(this.passphrase)
-
       user.publicKey = data
 	    this.$store.dispatch("registerUser", user)
 		    .then(() => {
