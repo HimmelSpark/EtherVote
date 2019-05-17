@@ -10,6 +10,9 @@ const method = {
 
   createVoting: 'voting/create',
   loadMyVotings: 'voting/get/user',
+  getVotingById: 'voting/get/',
+
+  loadAllVotes: 'voting/get/'
 };
 
 export default {baseUrl, method};

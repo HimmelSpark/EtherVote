@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <core-filter />
 
     <core-toolbar />
 
@@ -9,6 +8,23 @@
     </template>
 
     <core-view />
+
+    <template v-if="errorMessage">
+      <v-snackbar
+          :timeout="5000"
+          :multi-line="true"
+          :color="info"
+          :value="true"
+          @input="closeError"
+      >
+        {{ errorMessage }}
+        <v-btn
+            flat
+            color="error"
+            @click.native="closeError"> Close
+        </v-btn>
+      </v-snackbar>
+    </template>
 
   </v-app>
 </template>
@@ -21,6 +37,14 @@ export default {
   computed: {
     isUserLoggedIn () {
       return this.$store.getters.isUserLoggedIn
+    },
+    errorMessage() {
+      return this.$store.getters.error
+    }
+  },
+  methods: {
+    closeError() {
+      this.$store.commit('clearError')
     }
   },
   beforeCreate() {

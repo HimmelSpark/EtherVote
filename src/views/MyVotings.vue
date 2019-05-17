@@ -5,6 +5,10 @@
       wrap
       align-center>
 
+      <template v-if="votings.length === 0">
+        <span class="display-1">Вы еще не создавали голосования</span>
+      </template>
+
       <template v-for="(voting, index) in votings">
         <v-flex
           :key="index"
@@ -13,8 +17,9 @@
           lg4>
           <v-hover>
             <v-card
-              slot-scope="{ hover }"
+              :to="`voting/${voting.id}`"
               :class="`elevation-${hover ? 12 : 2}`"
+              slot-scope="{ hover }"
               class="ma-auto voteCard">
 
               <v-card-title>

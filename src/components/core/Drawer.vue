@@ -75,6 +75,11 @@ export default {
         to: '/votings',
         icon: 'mdi-assistant',
         text: 'Мои голосования'
+      },
+      {
+        to: '/votes',
+        icon: 'how_to_vote',
+        text: 'Проголосовать'
       }
     ],
     responsive: false
