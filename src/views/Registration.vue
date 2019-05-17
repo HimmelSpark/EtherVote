@@ -135,6 +135,16 @@
     user() {
 	    return this.$store.getters.user;
     }
-	}
+	},
+
+    watch: {
+      web3(v) {
+         if (!!v === null || !!v === undefined) {
+           this.$store.dispatch('setError', "Сеть блокчейна недоступна")
+         } else {
+           this.$store.dispatch('setError', "Сеть блокчейна подключена")
+         }
+      }
+    }
   }
 </script>

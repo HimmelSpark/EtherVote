@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import store from '@/store/';
 
 /*
 * 1. Check for injected web3 (mist/metamask)
@@ -18,6 +19,9 @@ let getWeb3 = new Promise(function (resolve, reject) {
 	web3() {
 	  return web3
 	}
+  });
+  reject(() => {
+    store.dispatch('setError', "Сеть блокчейна недоступна")
   })
 })
 	.then(result => {

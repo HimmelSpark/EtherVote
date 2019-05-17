@@ -11,10 +11,11 @@ const method = {
   createVoting: 'voting/create',
   loadMyVotings: 'voting/get/user',
   getVotingById: 'voting/get/',
+  addUserToVote: 'voting/add',
 
   loadAllVotes: 'voting/get/',
   loadPeopleByVoteId: 'voting/get/', //${1}/users
-  loadAllPeople: 'user/get'
+  loadAllPeople: 'user/get',
 };
 
 export default {baseUrl, method};

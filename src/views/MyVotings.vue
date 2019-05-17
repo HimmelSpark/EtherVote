@@ -188,14 +188,14 @@ export default {
 
 	    let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON);
 
-	    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passphrase,100000);
+	    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passphrase, 100000);
 
 	    await ballotContract
           .deploy({
 		        data: this.votingContractHex,
 		        arguments: [this.vCount]
           })
-          .send({from: this.user.publicKey, gas: '4700000', gasPrice: 100})
+          .send({from: this.user.publicKey, gas: '470000', gasPrice: 100})
           .on('transactionHash', (hash) => {
             voting.blockKey = hash;
 			      this.$store.dispatch('createVote', voting)

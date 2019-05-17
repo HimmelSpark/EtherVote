@@ -90,5 +90,19 @@ export default {
 	  console.log(e);
 	  commit("setError", e.response.data);
 	}
+  },
+  async addUserToVote({commit}, userVote) {
+	console.log('in_action: addUserToVote');
+	commit("clearError");
+	commit("setLoading", true);
+	try {
+	  const response = await HTTP.post(API.method.addUserToVote, userVote);
+	  console.log(response.data);
+	  commit("setLoading", false);
+	} catch (e) {
+	  commit("setLoading", false);
+	  console.log(e);
+	  commit("setError", e.response.data);
+	}
   }
 }

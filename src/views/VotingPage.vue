@@ -97,8 +97,8 @@
                     :items="allPeople"
                     label="Email"
                     editable
-                    item-value="publicKey"
-                    v-model="publicKey"
+                    item-value="id"
+                    v-model="user_id"
                 ></v-overflow-btn>
 
               </v-flex>
@@ -119,6 +119,7 @@
                 </v-btn>
               </v-flex>
             </v-layout>
+
           </v-container>
         </v-form>
       </material-card>
@@ -148,13 +149,29 @@
             value: null
           }],
 		    addDialog: false,
-		    publicKey: '',
 		    passPhrase: '',
+        user_id: '',
       }
     },
     computed: {
+	    publicKey() {
+	      this.allPeople.forEach(c => {
+	        if (c.id == this.user_id) {
+	          return c.publicKey;
+          }
+        });
+      },
+	    web3() {
+		    return this.$store.getters.getWeb3;
+	    },
       voting() {
         return this.$store.getters.voting
+      },
+      user() {
+        return this.$store.getters.user;
+      },
+      votingContractJSON() {
+        return this.$store.getters.votingContractJSON
       },
       people() {
         return this.$store.getters.people.map((curr, i) => {
@@ -171,10 +188,22 @@
             })
       }
     },
-    methods: {
-	    onSubmit() {
 
-      }
+    methods: {
+	    async onSubmit() {
+	      try {
+          let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
+          let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
+          await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passPhrase, 100000);
+    		  let response = ballotContract.methods.giveRightToVote(this.publicKey).send({from: this.user.publicKey});
+    		  this.$store.dispatch('addUserToVote', {user_id:this.user_id, vote_id: this.voting.id})
+              .then(() => this.$store.dispatch('loadPeopleByVoteId', this.voting.id)
+                  .then(() => this.addDialog = false))
+        } catch (e) {
+	        console.log(e.response.data)
+        }
+		}
+
     }
   }
 </script>
