@@ -60,5 +60,35 @@ export default {
 	  console.log(e);
 	  commit("setError", e.response.data);
 	}
+  },
+  async loadPeopleByVoteId({commit}, id) {
+	console.log('in_action: loadPeopleByVoteId');
+	commit("clearError");
+	commit("setLoading", true);
+	try {
+	  const response = await HTTP.get(API.method.loadPeopleByVoteId + id + "/users");
+	  console.log(response.data);
+	  commit("setLoading", false);
+	  commit("setPeople", response.data)
+	} catch (e) {
+	  commit("setLoading", false);
+	  console.log(e);
+	  commit("setError", e.response.data);
+	}
+  },
+  async loadAllPeople({commit}) {
+	console.log('in_action: loadAllPeople');
+	commit("clearError");
+	commit("setLoading", true);
+	try {
+	  const response = await HTTP.get(API.method.loadAllPeople);
+	  console.log(response.data);
+	  commit("setLoading", false);
+	  commit("setAllPeople", response.data)
+	} catch (e) {
+	  commit("setLoading", false);
+	  console.log(e);
+	  commit("setError", e.response.data);
+	}
   }
 }

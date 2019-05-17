@@ -7,5 +7,11 @@ export default {
   },
   allVotes(state) {
     return state.allVotes
+  },
+  people(state) {
+    return state.people
+  },
+  allPeople(state) {
+    return state.allPeople
   }
 }

@@ -7,5 +7,11 @@ export default {
   },
   setAllVotes(state, votes) {
     state.allVotes = votes;
+  },
+  setPeople(state, people) {
+    state.people = people;
+  },
+  setAllPeople(state, allPeople) {
+    state.allPeople = allPeople;
   }
 }

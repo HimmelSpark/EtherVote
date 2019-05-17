@@ -12,7 +12,9 @@ const method = {
   loadMyVotings: 'voting/get/user',
   getVotingById: 'voting/get/',
 
-  loadAllVotes: 'voting/get/'
+  loadAllVotes: 'voting/get/',
+  loadPeopleByVoteId: 'voting/get/', //${1}/users
+  loadAllPeople: 'user/get'
 };
 
 export default {baseUrl, method};
