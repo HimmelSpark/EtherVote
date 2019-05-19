@@ -117,6 +117,8 @@
             <v-layout wrap>
               <v-flex xs12>
 
+                {{user_id}}
+
                 <v-overflow-btn
                     :items="allPeople"
                     label="Email"
@@ -183,13 +185,6 @@
       }
     },
     computed: {
-	    publicKey() {
-	      this.allPeople.forEach(c => {
-	        if (c.id == this.user_id) {
-	          return c.publicKey;
-          }
-        });
-      },
 	    web3() {
 		    return this.$store.getters.getWeb3;
 	    },
@@ -222,10 +217,11 @@
 	    async onSubmit() {
 	      try {
           let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
+          console.log("receipt", receipt);
           let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
           await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passPhrase, 100000);
-    		  let response = ballotContract.methods.giveRightToVote(this.publicKey).send({from: this.user.publicKey});
-    		  this.$store.dispatch('addUserToVote', {user_id:this.user_id, vote_id: this.voting.id})
+          let response = ballotContract.methods.giveRightToVote(this.publicKey()).send({from: this.user.publicKey});
+          this.$store.dispatch('addUserToVote', {user_id:this.user_id, vote_id: this.voting.id})
               .then(() => this.$store.dispatch('loadPeopleByVoteId', this.voting.id)
                   .then(() => this.addDialog = false))
         } catch (e) {
@@ -236,20 +232,31 @@
       async loadChainData() {
         let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
         let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
-        ballotContract.methods.votersNum().call({from:this.user.publicKey}, (res) => {
+        ballotContract.methods.votersNum().call({from:this.user.publicKey}, (err, res) => {
           console.log(res);
-          this.voting.pCount = res
+          // this.voting.pCount = res
         })
       },
+
+
       async vote(num) {
 	      console.log('voting for candidate #', num);
-	      /*
-	        здесь должен быть код голосования на блокчейне
-	       */
+		    let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
+		    let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
+		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, '12345678', 100000); //TODO не забыть
+		    let response = ballotContract.methods.vote(num).send({from: this.user.publicKey}, () =>
+			    this.$store.dispatch('voteForCandidate', this.voting.id)
+				    .then(() => this.$store.dispatch('loadVotingById',this.voting.id)));
 
-	      this.$store.dispatch('voteForCandidate', this.voting.id)
-            .then(() => this.$store.dispatch('loadVotingById',this.voting.id))
-      }
+      },
+
+      publicKey() {
+	      for (let i = 0; i < this.allPeople.length; i++) {
+	        if (this.allPeople[i].id === this.user_id) {
+	          return this.allPeople[i].publicKey
+          }
+        }
+      },
     }
   }
 </script>
