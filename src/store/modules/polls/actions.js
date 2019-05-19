@@ -104,5 +104,19 @@ export default {
 	  console.log(e);
 	  commit("setError", e.response.data);
 	}
+  },
+  async voteForCandidate({commit}, votingId) {
+	console.log('in_action: voteForCandidate');
+	commit("clearError");
+	commit("setLoading", true);
+	try {
+	  const response = await HTTP.post(API.method.voteForCandidate, votingId);
+	  console.log(response.data);
+	  commit("setLoading", false);
+	} catch (e) {
+	  commit("setLoading", false);
+	  console.log(e);
+	  commit("setError", e.response.data);
+	}
   }
 }

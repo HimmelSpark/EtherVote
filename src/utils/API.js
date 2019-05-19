@@ -12,6 +12,7 @@ const method = {
   loadMyVotings: 'voting/get/user',
   getVotingById: 'voting/get/',
   addUserToVote: 'voting/add',
+  voteForCandidate: 'voting/vote',
 
   loadAllVotes: 'voting/get/',
   loadPeopleByVoteId: 'voting/get/', //${1}/users

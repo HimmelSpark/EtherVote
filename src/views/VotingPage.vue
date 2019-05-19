@@ -14,7 +14,7 @@
             <v-card-text class="text-xs-center">
               <h2 class="card-title font-weight-light">{{ voting.name }}</h2>
               <p class="card-description font-weight-light">{{ voting.description }}</p>
-
+              <p class="card-description font-weight-light">{{ voting.pCount }}</p>
               <v-layout row wrap>
                 <template v-for="(v,i) in voting.variants">
                   <v-flex xs12 sm6 md4 lg3>
@@ -23,14 +23,38 @@
                         <v-chip label>#{{i+1}}</v-chip>:{{v.name}}
                       </v-card-title>
                       <v-card-text>
-                        {{v.description}}
+                        <span>{{v.description}}</span>
+                        <span></span>
                       </v-card-text>
+
+                      <template v-if="voting.voted !== null">
+                        <v-card-actions align-center justify-center>
+                          <v-layout row>
+                            <v-flex xs12>
+                              <v-btn
+                                  color="green"
+                                  :disabled="voting.voted === true"
+                                  @click="vote(i)">
+                                <v-icon left>how_to_vote</v-icon>
+                                Проголосовать
+                              </v-btn>
+                            </v-flex>
+                          </v-layout>
+                        </v-card-actions>
+                      </template>
+
                     </v-card>
                   </v-flex>
                 </template>
               </v-layout>
-
             </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn dark @click="loadChainData">
+                <v-icon left>insert_chart</v-icon>
+                Загрузить данные из блокчейна
+              </v-btn>
+            </v-card-actions>
           </material-card>
         </v-flex>
 
@@ -38,11 +62,10 @@
           <v-btn color="green" @click="addDialog = true">Добавить участника</v-btn>
         </v-flex>
 
-        <v-flex xs6>
+        <v-flex xs12>
           <material-card
               color="green"
-              title="Teachers table"
-              text="You can sort the data by clicking the header"
+              title="Список участников голосования"
           >
             <v-data-table
                 :headers="headers"
@@ -66,6 +89,7 @@
               >
                 <td>{{ item.num }}</td>
                 <td>{{ item.email }}</td>
+                <td>{{ item.publicKey }}</td>
                 <td>
                   <v-btn icon round color="red">
                     <v-icon @click="deleteTeacherModal = true; teacherToDelete = item.id">delete</v-icon>
@@ -145,6 +169,11 @@
           },
           {
             sortable: false,
+            text: 'Публичный ключ',
+            value: 'publicKey'
+          },
+          {
+            sortable: false,
             text: '🗑',
             value: null
           }],
@@ -200,10 +229,27 @@
               .then(() => this.$store.dispatch('loadPeopleByVoteId', this.voting.id)
                   .then(() => this.addDialog = false))
         } catch (e) {
-	        console.log(e.response.data)
+		      this.$store.dispatch('setError', e);
+	        console.log(e)
         }
-		}
+		  },
+      async loadChainData() {
+        let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
+        let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
+        ballotContract.methods.votersNum().call({from:this.user.publicKey}, (res) => {
+          console.log(res);
+          this.voting.pCount = res
+        })
+      },
+      async vote(num) {
+	      console.log('voting for candidate #', num);
+	      /*
+	        здесь должен быть код голосования на блокчейне
+	       */
 
+	      this.$store.dispatch('voteForCandidate', this.voting.id)
+            .then(() => this.$store.dispatch('loadVotingById',this.voting.id))
+      }
     }
   }
 </script>
