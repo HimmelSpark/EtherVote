@@ -214,10 +214,17 @@
     },
 
     methods: {
+
 	    async onSubmit() {
 	      try {
           let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
-          console.log("receipt", receipt);
+          if (receipt === null) {
+            this.$store.dispatch('setError', 'Контракт еще не обработан!');
+            return;
+          }
+          console.log("receipt", receipt.contractAddress);
+          console.log("pki", this.publicKey());
+          console.log("amdinpki", this.user.publicKey);
           let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
           await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passPhrase, 100000);
           let response = ballotContract.methods.giveRightToVote(this.publicKey()).send({from: this.user.publicKey});
