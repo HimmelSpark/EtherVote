@@ -85,12 +85,13 @@
 
                   <v-flex xs12>
                     <v-radio-group v-model="vCount" label="Количество вариантов" row>
-                      <v-radio
-                          v-for="n of [2,3,4]"
-                          :key="n"
-                          :label="n"
-                          :value="n"
-                      ></v-radio>
+                      <template v-for="n of [2,3,4]">
+                        <v-radio
+                            :key="n"
+                            :label="n.toString()"
+                            :value="n"
+                        ></v-radio>
+                      </template>
                     </v-radio-group>
                   </v-flex>
 
@@ -126,7 +127,8 @@
                     <v-btn
                         class="mx-0 font-weight-light"
                         color="success"
-                        @click="addVoting">
+                        @click="addVoting"
+                        :loading="loading">
                       Создать
                     </v-btn>
                   </v-flex>
@@ -174,46 +176,59 @@ export default {
     },
 	  votings() {
       return this.$store.getters.myVotings
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
 
   },
   methods: {
 	  async addVoting () {
-	    let voting = {
-	      name: this.name,
-		    description: this.description,
-		    variants: this.variants.filter(v => v.name !== '' && v.description !== '')
-      };
-      console.log(voting);
-      console.log(this.votingContractJSON);
+
+	    this.$store.dispatch('setLoading', true);
+
+	    try {
+        let voting = {
+          name: this.name,
+          description: this.description,
+          variants: this.variants.filter(v => v.name !== '' && v.description !== '')
+        };
+        console.log(voting);
+        console.log(this.votingContractJSON);
         console.log(this.votingContractHex);
 
         console.log(this.user.publicKey);
         console.log(this.passphrase);
 
 
-	    let ballotContract =new this.web3.web3Instance().eth.Contract(this.votingContractJSON);
+        let ballotContract =new this.web3.web3Instance().eth.Contract(this.votingContractJSON);
 
-	    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passphrase, 100000);
+        await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passphrase, 100000);
 
-	    await ballotContract.deploy({
-		        data: this.votingContractHex,
-		        arguments: [this.vCount]
-          })
+        await ballotContract.deploy({
+          data: this.votingContractHex,
+          arguments: [this.vCount]
+        })
           .send({from: this.user.publicKey, gas: '4700000', gasPrice: 10})
           .on('transactionHash', (hash) => {
             voting.blockKey = hash;
-			      this.$store.dispatch('createVote', voting)
-                .then(() => {
-                  this.$store.dispatch('loadMyVotings');
-                  this.dialog = false;
-                })
-                .catch(() => {
-				          this.dialog = false;
-                })
+            this.$store.dispatch('createVote', voting)
+              .then(() => {
+              this.$store.dispatch('loadMyVotings');
+              this.dialog = false;
+              })
+              .catch(() => {
+              this.dialog = false;
+              })
           })
           .on('confirmation', (confirmationNumber, receipt) => {})
           .on('receipt', (receipt) => {});
+	    } catch (e) {
+		    this.$store.dispatch('setLoading', false);
+  	  }
+
+	    this.$store.dispatch('setLoading', false);
+
     }
   }
 }
