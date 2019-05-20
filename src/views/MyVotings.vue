@@ -185,17 +185,22 @@ export default {
 		    variants: this.variants.filter(v => v.name !== '' && v.description !== '')
       };
       console.log(voting);
+      console.log(this.votingContractJSON);
+        console.log(this.votingContractHex);
 
-	    let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON);
+        console.log(this.user.publicKey);
+        console.log(this.passphrase);
+
+
+	    let ballotContract =new this.web3.web3Instance().eth.Contract(this.votingContractJSON);
 
 	    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passphrase, 100000);
 
-	    await ballotContract
-          .deploy({
+	    await ballotContract.deploy({
 		        data: this.votingContractHex,
 		        arguments: [this.vCount]
           })
-          .send({from: this.user.publicKey, gas: '470000', gasPrice: 100})
+          .send({from: this.user.publicKey, gas: '4700000', gasPrice: 10})
           .on('transactionHash', (hash) => {
             voting.blockKey = hash;
 			      this.$store.dispatch('createVote', voting)

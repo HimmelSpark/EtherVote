@@ -225,7 +225,7 @@
           console.log("receipt", receipt.contractAddress);
           console.log("pki", this.publicKey());
           console.log("amdinpki", this.user.publicKey);
-          let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
+          let ballotContract = new this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
           await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passPhrase, 100000);
           let response = ballotContract.methods.giveRightToVote(this.publicKey()).send({from: this.user.publicKey});
           this.$store.dispatch('addUserToVote', {user_id:this.user_id, vote_id: this.voting.id})
@@ -238,7 +238,7 @@
 		  },
       async loadChainData() {
         let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
-        let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
+        let ballotContract = new this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
         ballotContract.methods.votersNum().call({from:this.user.publicKey}, (err, res) => {
           console.log(res);
           // this.voting.pCount = res
@@ -249,9 +249,13 @@
       async vote(num) {
 	      console.log('voting for candidate #', num);
 		    let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
-		    let ballotContract = this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
-		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, '12345678', 100000); //TODO не забыть
-		    let response = ballotContract.methods.vote(num).send({from: this.user.publicKey}, () =>
+		    let ballotContract = new this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
+            ballotContract.methods.votersNum().call({from:this.user.publicKey},
+                function (err,data) {
+                  console.log("VOTERS NUM:",data);
+                })
+		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, 'password', 100000); //TODO не забыть
+		    ballotContract.methods.vote(num).send({from: this.user.publicKey}, () =>
 			    this.$store.dispatch('voteForCandidate', this.voting.id)
 				    .then(() => this.$store.dispatch('loadVotingById',this.voting.id)));
 
