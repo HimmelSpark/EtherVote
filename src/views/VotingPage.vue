@@ -14,7 +14,7 @@
             <v-card-text class="text-xs-center">
               <h2 class="card-title font-weight-light">{{ voting.name }}</h2>
               <p class="card-description font-weight-light">Описание голосования: {{ voting.description }}</p>
-              <p class="card-description font-weight-light">Количество голосующих (сервер): {{ voting.variants.length }}</p>
+              <p class="card-description font-weight-light">Количество голосующих (сервер): {{ people.length }}</p>
               <p class="card-description font-weight-light">Количество голосующих (блокчейн): {{ chainData.votersNum}}</p>
               <v-layout row wrap>
                 <template v-for="(v,i) in voting.variants">
