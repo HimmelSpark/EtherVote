@@ -40,7 +40,7 @@
                               <v-btn
                                   color="green"
                                   :disabled="voting.voted === true"
-                                  @click="vote(i)">
+                                  @click="numToVote = i; voteDialog = true">
                                 <v-icon left>how_to_vote</v-icon>
                                 Проголосовать
                               </v-btn>
@@ -65,7 +65,12 @@
         </v-flex>
 
         <v-flex xs12>
-          <v-btn color="green" @click="addDialog = true">Добавить участника</v-btn>
+          <v-btn
+              color="green"
+              @click="addDialog = true"
+              :loading="loading">
+            Добавить участника
+          </v-btn>
         </v-flex>
 
         <v-flex xs12>
@@ -157,6 +162,24 @@
       </material-card>
     </v-dialog>
 
+    <v-dialog max-width="390" v-model="voteDialog">
+      <v-card>
+        <v-card-text>
+          <v-text-field
+              label="Введите кодовое слово"
+              type="password"
+              v-model="passPhrase"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn dark color="green" @click="vote(numToVote)">Подтвердить</v-btn>
+        </v-card-actions>
+      </v-card>
+
+
+    </v-dialog>
+
   </v-container>
 </template>
 
@@ -189,6 +212,8 @@
 		    addDialog: false,
 		    passPhrase: '',
         user_id: '',
+		    voteDialog: false,
+        numToVote: '',
       }
     },
     computed: {
@@ -249,6 +274,7 @@
 		      this.$store.dispatch('setError', e);
 	        console.log(e)
         }
+        this.passPhrase = ''
 		  },
       async loadChainData() {
         const blockKey = this.voting.blockKey;
@@ -257,15 +283,39 @@
         let chainData = {};
         chainData.proposalVotes = [];
         if (receipt) {
+
           ballotContract.methods.votersNum().call({from:this.user.publicKey}, (err, res) => {
           chainData.votersNum = Number.parseInt(res._hex);
+
           let proposalVotes = [];
-          for (let i = 0; i < this.voting.variants.length; i++) {
-            ballotContract.methods.proposalVotes(i).call({from:this.user.publicKey}, (err, res) => {
-            proposalVotes.push(Number.parseInt(res._hex));
+          if (this.voting.variants.length > 0) {
+            ballotContract.methods.proposalVotes(0).call({from:this.user.publicKey}, (err, res) => {
+              proposalVotes.push(Number.parseInt(res._hex));
+			        if (this.voting.variants.length > 1) {
+                ballotContract.methods.proposalVotes(1).call({from:this.user.publicKey}, (err, res) => {
+                  proposalVotes.push(Number.parseInt(res._hex));
+				          if (this.voting.variants.length > 2) {
+                    ballotContract.methods.proposalVotes(2).call({from:this.user.publicKey}, (err, res) => {
+                      proposalVotes.push(Number.parseInt(res._hex));
+					            if (this.voting.variants.length > 3) {
+                        ballotContract.methods.proposalVotes(3).call({from:this.user.publicKey}, (err, res) => {
+                          proposalVotes.push(Number.parseInt(res._hex));
+                        });
+                      }
+                    });
+                  }
+                });
+			        }
             });
-            chainData.proposalVotes = proposalVotes;
           }
+          chainData.proposalVotes = proposalVotes;
+
+          // for (let i = 0; i < this.voting.variants.length; i++) {
+          //   ballotContract.methods.proposalVotes(i).call({from:this.user.publicKey}, (err, res) => {
+          //   proposalVotes.push(Number.parseInt(res._hex));
+          //   });
+          // }
+
           ballotContract.methods.winningProposal().call({from:this.user.publicKey}, (err, res) => {
             chainData.winningProposal = res;
           });
@@ -274,8 +324,6 @@
           this.$store.dispatch('updateChainData', chainData);
         }
       },
-
-
       async vote(num) {
 	      console.log('voting for candidate #', num);
 		    let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
@@ -290,7 +338,6 @@
 				    .then(() => this.$store.dispatch('loadVotingById', this.voting.id)));
 		    this.loadChainData()
       },
-
       publicKey() {
 	      for (let i = 0; i < this.allPeople.length; i++) {
 	        if (this.allPeople[i].id === this.user_id) {

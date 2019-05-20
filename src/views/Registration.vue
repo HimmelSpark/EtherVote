@@ -79,8 +79,6 @@
         <router-link tag="a" class="col" class-active="active" to="/login">Already have an account?</router-link>
       </v-flex>
 
-      {{web3}}
-
     </v-container>
   </v-container>
 </template>

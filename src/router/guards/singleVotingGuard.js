@@ -13,12 +13,34 @@ export default async (to, from, next) => {
 		  ballotContract.methods.votersNum().call({from:store.getters.user.publicKey}, (err, res) => {
 			chainData.votersNum = Number.parseInt(res._hex);
 			let proposalVotes = [];
-			for (let i = 0; i < store.getters.voting.variants.length; i++) {
-			  ballotContract.methods.proposalVotes(i).call({from:store.getters.user.publicKey}, (err, res) => {
+
+			if (store.getters.voting.variants.length > 0) {
+			  ballotContract.methods.proposalVotes(0).call({from:store.getters.user.publicKey}, (err, res) => {
 				proposalVotes.push(Number.parseInt(res._hex));
+				if (store.getters.voting.variants.length > 1) {
+				  ballotContract.methods.proposalVotes(1).call({from:store.getters.user.publicKey}, (err, res) => {
+					proposalVotes.push(Number.parseInt(res._hex));
+					if (store.getters.voting.variants.length > 2) {
+					  ballotContract.methods.proposalVotes(2).call({from:store.getters.user.publicKey}, (err, res) => {
+						proposalVotes.push(Number.parseInt(res._hex));
+						if (store.getters.voting.variants.length > 3) {
+						  ballotContract.methods.proposalVotes(3).call({from:store.getters.user.publicKey}, (err, res) => {
+							proposalVotes.push(Number.parseInt(res._hex));
+						  });
+						}
+					  });
+					}
+				  });
+				}
 			  });
-			  chainData.proposalVotes = proposalVotes;
 			}
+			chainData.proposalVotes = proposalVotes;
+
+			// for (let i = 0; i < store.getters.voting.variants.length; i++) {
+			//   ballotContract.methods.proposalVotes(i).call({from:store.getters.user.publicKey}, (err, res) => {
+			// 	proposalVotes.push(Number.parseInt(res._hex));
+			//   });
+			// }
 			ballotContract.methods.winningProposal().call({from:store.getters.user.publicKey}, (err, res) => {
 			  chainData.winningProposal = res;
 			});
