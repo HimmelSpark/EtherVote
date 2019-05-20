@@ -13,18 +13,24 @@
           <material-card>
             <v-card-text class="text-xs-center">
               <h2 class="card-title font-weight-light">{{ voting.name }}</h2>
-              <p class="card-description font-weight-light">{{ voting.description }}</p>
-              <p class="card-description font-weight-light">{{ voting.pCount }}</p>
+              <p class="card-description font-weight-light">Описание голосования: {{ voting.description }}</p>
+              <p class="card-description font-weight-light">Количество голосующих (сервер): {{ voting.variants.length }}</p>
+              <p class="card-description font-weight-light">Количество голосующих (блокчейн): {{ chainData.votersNum}}</p>
               <v-layout row wrap>
                 <template v-for="(v,i) in voting.variants">
                   <v-flex xs12 sm6 md4 lg3>
                     <v-card>
                       <v-card-title>
-                        <v-chip label>#{{i+1}}</v-chip>:{{v.name}}
+                        <template v-if="chainData.winningProposal === i && chainData.proposalVotes[chainData.winningProposal] !== 0">
+                          <v-chip label dark color="green">#{{i+1}}</v-chip>:{{v.name}}
+                        </template>
+                        <template v-else>
+                          <v-chip label>#{{i+1}}</v-chip>:{{v.name}}
+                        </template>
                       </v-card-title>
                       <v-card-text>
-                        <span>{{v.description}}</span>
-                        <span></span>
+                        <p>Описание: {{v.description}}</p>
+                        <p>Количество голосов: {{chainData.proposalVotes[i]}}</p>
                       </v-card-text>
 
                       <template v-if="voting.voted !== null">
@@ -158,6 +164,7 @@
   export default {
     data() {
       return {
+        valid: false,
 		    headers: [
           {
             sortable: false,
@@ -210,6 +217,12 @@
               c.text = c.email;
               return c;
             })
+      },
+      chainData() {
+	      return this.$store.getters.chainData
+      },
+      loading() {
+	      return this.$store.getters.loading
       }
     },
 
@@ -254,7 +267,7 @@
                 function (err,data) {
                   console.log("VOTERS NUM:",data);
                 })
-		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, 'password', 100000); //TODO не забыть
+		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, '12345678', 100000); //TODO не забыть
 		    ballotContract.methods.vote(num).send({from: this.user.publicKey}, () =>
 			    this.$store.dispatch('voteForCandidate', this.voting.id)
 				    .then(() => this.$store.dispatch('loadVotingById',this.voting.id)));

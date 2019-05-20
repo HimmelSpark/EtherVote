@@ -4,4 +4,5 @@ export default {
   allVotes: null,
   people: null,
   allPeople: null,
+  chainData: null,
 }

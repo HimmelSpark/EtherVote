@@ -13,5 +13,8 @@ export default {
   },
   setAllPeople(state, allPeople) {
     state.allPeople = allPeople;
+  },
+  setChainData(state, chainData) {
+    state.chainData = chainData;
   }
 }

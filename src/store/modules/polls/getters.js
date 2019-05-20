@@ -13,5 +13,8 @@ export default {
   },
   allPeople(state) {
     return state.allPeople
+  },
+  chainData(state) {
+    return state.chainData
   }
 }

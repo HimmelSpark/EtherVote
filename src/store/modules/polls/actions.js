@@ -118,5 +118,8 @@ export default {
 	  console.log(e);
 	  commit("setError", e.response.data);
 	}
+  },
+  async updateChainData({commit}, chainData) {
+    commit('setChainData', chainData);
   }
 }
