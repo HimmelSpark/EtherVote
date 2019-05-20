@@ -243,19 +243,36 @@
           let response = ballotContract.methods.giveRightToVote(this.publicKey()).send({from: this.user.publicKey});
           this.$store.dispatch('addUserToVote', {user_id:this.user_id, vote_id: this.voting.id})
               .then(() => this.$store.dispatch('loadPeopleByVoteId', this.voting.id)
-                  .then(() => this.addDialog = false))
+                  .then(() => this.addDialog = false));
+		      this.$store.dispatch('loadVotingById', this.voting.id)
         } catch (e) {
 		      this.$store.dispatch('setError', e);
 	        console.log(e)
         }
 		  },
       async loadChainData() {
-        let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(this.voting.blockKey);
+        const blockKey = this.voting.blockKey;
+        let receipt = await this.web3.web3Instance().eth.getTransactionReceipt(blockKey);
         let ballotContract = new this.web3.web3Instance().eth.Contract(this.votingContractJSON, receipt.contractAddress);
-        ballotContract.methods.votersNum().call({from:this.user.publicKey}, (err, res) => {
-          console.log(res);
-          // this.voting.pCount = res
-        })
+        let chainData = {};
+        chainData.proposalVotes = [];
+        if (receipt) {
+          ballotContract.methods.votersNum().call({from:this.user.publicKey}, (err, res) => {
+          chainData.votersNum = Number.parseInt(res._hex);
+          let proposalVotes = [];
+          for (let i = 0; i < this.voting.variants.length; i++) {
+            ballotContract.methods.proposalVotes(i).call({from:this.user.publicKey}, (err, res) => {
+            proposalVotes.push(Number.parseInt(res._hex));
+            });
+            chainData.proposalVotes = proposalVotes;
+          }
+          ballotContract.methods.winningProposal().call({from:this.user.publicKey}, (err, res) => {
+            chainData.winningProposal = res;
+          });
+          });
+
+          this.$store.dispatch('updateChainData', chainData);
+        }
       },
 
 
@@ -266,12 +283,12 @@
             ballotContract.methods.votersNum().call({from:this.user.publicKey},
                 function (err,data) {
                   console.log("VOTERS NUM:",data);
-                })
+                });
 		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, '12345678', 100000); //TODO не забыть
 		    ballotContract.methods.vote(num).send({from: this.user.publicKey}, () =>
 			    this.$store.dispatch('voteForCandidate', this.voting.id)
-				    .then(() => this.$store.dispatch('loadVotingById',this.voting.id)));
-
+				    .then(() => this.$store.dispatch('loadVotingById', this.voting.id)));
+		    this.loadChainData()
       },
 
       publicKey() {
