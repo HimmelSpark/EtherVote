@@ -332,7 +332,7 @@
                 function (err,data) {
                   console.log("VOTERS NUM:",data);
                 });
-		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, '12345678', 100000); //TODO не забыть
+		    await this.web3.web3Instance().eth.personal.unlockAccount(this.user.publicKey, this.passPhrase, 100000); //TODO не забыть
 		    ballotContract.methods.vote(num).send({from: this.user.publicKey}, () =>
 			    this.$store.dispatch('voteForCandidate', this.voting.id)
 				    .then(() => this.$store.dispatch('loadVotingById', this.voting.id)));
