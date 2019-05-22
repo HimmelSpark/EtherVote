@@ -14,6 +14,7 @@ import AlreadyAuthGuard from './guards/alreadyAuthGuard'
 import MyVotingsGuard from './guards/myVotingsGuard'
 import SingleVotingGuard from './guards/singleVotingGuard'
 import AllVotesGuard from './guards/toVoteGuard'
+import ProfileGuard from './guards/profileGuard'
 
 Vue.use(Router);
 
@@ -23,17 +24,13 @@ const router = new Router({
   routes: [
     {
 	  path: '*',
-	  redirect: '/dashboard'
-    },
-    {
-	  path: '/dashboard',
-	  // Relative to /src/views
-	  component: Dashboard
+	  redirect: '/user-profile'
     },
     {
 	  path: '/user-profile',
 	  name: 'Мой профиль',
-	  component: UserProfile
+	  component: UserProfile,
+	  beforeEnter: ProfileGuard,
     },
     {
 	  path: '/login',

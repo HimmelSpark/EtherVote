@@ -82,7 +82,7 @@ export default {
 	}
   },
   async loadUser ({commit}) {
-	commit('loading user');
+	console.log('loading user');
 	commit('setLoading', true);
 	try {
 	  const response = await HTTP.get(API.method.adminInfo);

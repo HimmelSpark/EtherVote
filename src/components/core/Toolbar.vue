@@ -2,7 +2,6 @@
 <template>
   <v-toolbar
     id="core-toolbar"
-
     flat
     prominent
     style="background: #eee;"
@@ -11,7 +10,7 @@
       <v-toolbar-title
         class="tertiary--text font-weight-light">
         <v-btn
-          v-if="responsive"
+          v-if="responsive && isUserLoggedIn"
           class="default v-btn--simple"
           dark
           icon

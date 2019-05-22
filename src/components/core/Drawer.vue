@@ -11,28 +11,17 @@
     mobile-break-point="991"
     width="260"
   >
-    <v-img
-      :src="image"
-      height="100%">
+
       <v-layout
         class="fill-height"
         tag="v-list"
         column>
-        <v-list-tile avatar>
-          <v-list-tile-avatar
-            color="white">
-          </v-list-tile-avatar>
-          <v-list-tile-title class="title">
-            <!--Id сети: {{networkId}}-->
+        <v-list-tile>
+          <v-list-tile-title class="title" v-if="isUserLoggedIn">
+            {{user.email}}
           </v-list-tile-title>
         </v-list-tile>
         <v-divider/>
-        <v-list-tile v-if="responsive">
-          <v-text-field
-            class="purple-input search-input"
-            label="Search..."
-            color="purple"/>
-        </v-list-tile>
         <v-list-tile
           v-for="(link, i) in links"
           :key="i"
@@ -47,7 +36,6 @@
           <v-list-tile-title v-text="link.text"/>
         </v-list-tile>
       </v-layout>
-    </v-img>
   </v-navigation-drawer>
 </template>
 
@@ -66,11 +54,6 @@ export default {
         icon: 'mdi-account',
         text: 'Профиль'
       },
-      // {
-      //   to: '/icons',
-      //   icon: 'mdi-chart-bubble',
-      //   text: 'Icons'
-      // },
       {
         to: '/votings',
         icon: 'mdi-assistant',
@@ -85,8 +68,14 @@ export default {
     responsive: false
   }),
   computed: {
+    isUserLoggedIn () {
+      return this.$store.getters.isUserLoggedIn
+    },
     networkId() {
       return this.$store.getters.getWeb3.networkId
+    },
+    user() {
+      return this.$store.getters.user
     },
 	...mapState('app', ['image', 'color']),
 	inputValue: {
