@@ -74,7 +74,8 @@ export default {
 		  return [
 			{
 			  title: "logout", icon: "mdi-account-off", url: "/", onClick: () => {
-				this.$store.dispatch('logout')
+				  this.$store.dispatch('logout')
+              .then(() => this.$router.go('/login'))
 			  }
 			}
 		  ];

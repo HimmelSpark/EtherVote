@@ -68,7 +68,7 @@
                     lg12
                     class="text-xs-center"
             >
-                <router-link tag="a" class="col" class-active="active" to="/registration">Do not have an account?
+                <router-link tag="a" class="col" class-active="active" to="/registration">Нет учетной записи?
                 </router-link>
             </v-flex>
         </v-container>

@@ -64,7 +64,7 @@
           </material-card>
         </v-flex>
 
-        <v-flex xs12>
+        <v-flex xs12 v-if="voting.user_id === user.id">
           <v-btn
               color="green"
               @click="addDialog = true"
@@ -101,11 +101,6 @@
                 <td>{{ item.num }}</td>
                 <td>{{ item.email }}</td>
                 <td>{{ item.publicKey }}</td>
-                <td>
-                  <v-btn icon round color="red">
-                    <v-icon @click="deleteTeacherModal = true; teacherToDelete = item.id">delete</v-icon>
-                  </v-btn>
-                </td>
               </template>
 
             </v-data-table>
@@ -203,11 +198,6 @@
             sortable: false,
             text: 'Публичный ключ',
             value: 'publicKey'
-          },
-          {
-            sortable: false,
-            text: '🗑',
-            value: null
           }],
 		    addDialog: false,
 		    passPhrase: '',

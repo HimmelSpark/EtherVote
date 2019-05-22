@@ -55,6 +55,7 @@
                   <v-btn
                       class="mx-0 font-weight-light"
                       color="success"
+                      :loading="loading"
                       @click="onSubmit">
                     Sign up
                   </v-btn>
@@ -76,7 +77,7 @@
           lg12
           class="text-xs-center"
       >
-        <router-link tag="a" class="col" class-active="active" to="/login">Already have an account?</router-link>
+        <router-link tag="a" class="col" class-active="active" to="/login">Уже есть учетная запись?</router-link>
       </v-flex>
 
     </v-container>
@@ -111,19 +112,21 @@
 	}),
 	methods: {
 	  async onSubmit() {
-		if (this.$refs.form.validate()) {
-		  let user = {
-			  email: this.email,
-			  password: this.password,
-		  };
-		  const data = await this.web3.web3Instance().eth.personal.newAccount(this.passphrase)
-      user.publicKey = data
-	    this.$store.dispatch("registerUser", user)
-		    .then(() => {
-			    this.$router.push("/");
-		    })
-		    .catch(err => console.log(err));
-    }
+      if (this.$refs.form.validate()) {
+        this.$store.dispatch('setLoading', true)
+        let user = {
+          email: this.email,
+          password: this.password,
+        };
+        const data = await this.web3.web3Instance().eth.personal.newAccount(this.passphrase)
+		    this.$store.dispatch('setLoading', false)
+        user.publicKey = data
+        this.$store.dispatch("registerUser", user)
+          .then(() => {
+            this.$router.push("/");
+          })
+          .catch(err => console.log(err));
+      }
 	  }
 	},
 	computed: {
@@ -132,6 +135,9 @@
 	  },
     user() {
 	    return this.$store.getters.user;
+    },
+    loading () {
+      return this.$store.getters.loading;
     }
 	},
 

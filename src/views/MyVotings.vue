@@ -13,8 +13,7 @@
         <v-flex
           :key="index"
           xs12
-          md6
-          lg4>
+          md6>
           <v-hover>
             <v-card
               :to="`voting/${voting.id}`"
@@ -224,10 +223,14 @@ export default {
           .on('confirmation', (confirmationNumber, receipt) => {})
           .on('receipt', (receipt) => {});
 	    } catch (e) {
+		    console.log(e);
+		    this.dialog = false;
+		    this.$store.dispatch('setError', e.message);
 		    this.$store.dispatch('setLoading', false);
   	  }
 
 	    this.$store.dispatch('setLoading', false);
+	    this.dialog = false;
 
     }
   }

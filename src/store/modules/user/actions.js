@@ -50,18 +50,18 @@ export default {
     }
   },
   async logout ({ commit }) {
-    commit('clearError')
-    commit('setLoading', true)
-    commit('setRenderPermission', false)
+    commit('clearError');
+    commit('setLoading', true);
+    commit('setRenderPermission', false);
     try {
-      const response = await HTTP.post(API.method.logout)
-      commit('setLoading', false)
-      commit('setUser', null)
+      const response = await HTTP.post(API.method.logout);
+      commit('setLoading', false);
+      commit('setUser', null);
       commit('setRenderPermission', true)
     } catch (e) {
-      commit('setLoading', false)
-      commit('setError', e.response.data)
-      commit('setRenderPermission', true)
+      commit('setLoading', false);
+      commit('setError', e.response.data);
+      commit('setRenderPermission', true);
       throw e
     }
   },

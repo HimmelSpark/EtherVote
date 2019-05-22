@@ -68,6 +68,9 @@ export default {
     },
     web3() {
       return this.$store.getters.getWeb3;
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   },
   methods: {
@@ -80,7 +83,9 @@ export default {
 	  async restoreAccount() {
 	    const user = this.user;
 	    try {
+	      this.$store.dispatch('setLoading', true);
 		    user.publicKey = await this.web3.web3Instance().eth.personal.newAccount(this.newPassphrase);
+		    this.$store.dispatch('setLoading', false);
 		    this.$store.dispatch('restoreUser', user).then(() => {
 		      this.dialog = false;
 		      this.$store.dispatch('loadUser')
