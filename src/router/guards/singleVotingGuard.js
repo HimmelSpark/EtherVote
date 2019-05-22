@@ -2,6 +2,9 @@ import store from '@/store/';
 
 export default async (to, from, next) => {
   console.log('single voting guard');
+  if (store.getters.getWeb3 === null) {
+    next('/')
+  }
   store.dispatch('loadVotingById', to.params.id)
 	  .then(async () => {
 	    const blockKey = store.getters.voting.blockKey;
@@ -35,12 +38,6 @@ export default async (to, from, next) => {
 			  });
 			}
 			chainData.proposalVotes = proposalVotes;
-
-			// for (let i = 0; i < store.getters.voting.variants.length; i++) {
-			//   ballotContract.methods.proposalVotes(i).call({from:store.getters.user.publicKey}, (err, res) => {
-			// 	proposalVotes.push(Number.parseInt(res._hex));
-			//   });
-			// }
 			ballotContract.methods.winningProposal().call({from:store.getters.user.publicKey}, (err, res) => {
 			  chainData.winningProposal = res;
 			});

@@ -7,9 +7,15 @@ export default (to, from, next) => {
   if (store.getters.user) {
     store.dispatch('loadMyVotings')
 		.then(() => next())
-		.catch(() => next('/'))
+		.catch(() => next('/login'))
   } else {
-    store.dispatch('setError', 'Доступ закрыт!');
-    next('/login')
+    store.dispatch('loadUser')
+		.then(() => {
+		  store.dispatch('loadMyVotings').then(() => next())
+		})
+		.catch(() => {
+		  store.dispatch('setError', 'Доступ закрыт!');
+		  next('/login')
+		});
   }
 }
