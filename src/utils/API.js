@@ -1,6 +1,6 @@
 
 // const baseUrl = 'http://localhost:8090/';
-const baseUrl = "http://134.209.237.111/back";
+const baseUrl = "https://voterf.ml/back";
 
 const method = {
   signin: 'user/auth',

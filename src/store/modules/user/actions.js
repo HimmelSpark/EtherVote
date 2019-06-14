@@ -8,7 +8,7 @@ export default {
     commit('clearError')
     commit('setLoading', true)
     try {
-	  const web3 = new Web3('http://134.209.237.111:8545')
+	  const web3 = new Web3('https://voterf.ml/blockchain')
 	  let publicKey = await web3.eth.personal.newAccount(passphrase)
 	  console.log(publicKey)
 	  return publicKey

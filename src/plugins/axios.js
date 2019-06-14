@@ -4,7 +4,7 @@ import VueAxios from "vue-axios";
 import axios from 'axios'
 
 export const HTTP = axios.create({
-    baseURL: "http://134.209.237.111/back",
+    baseURL: "https://voterf.ml/back",
     // baseURL: "http://localhost:8090/",
     headers: {
         "Content-Type": "application/json"
